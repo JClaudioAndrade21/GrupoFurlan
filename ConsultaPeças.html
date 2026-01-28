@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Consulta de Peças - Checktudo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Fonte Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background:
+                linear-gradient(rgba(45, 45, 45, 0.88), rgba(45, 45, 45, 0.88)),
+                url('fundo menu.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 20px 20px;
+        }
+
+        header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 16px;
+            color: #ccc;
+        }
+
+        .container {
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 30px 20px;
+            border-radius: 15px;
+            max-width: 650px;
+            width: 90%;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            font-size: 26px;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 5px;
+            font-size: 16px;
+            color: #ccc;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            background-color: #1e1e1e;
+            color: #fff;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            background-color: #2a2a2a;
+            border: 1px solid #7a56ff;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            background-color: #7a56ff;
+            color: white;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        button:hover {
+            background-color: #5a3ccf;
+        }
+
+        #mensagem {
+            text-align: center;
+            margin-top: 8px;
+            font-weight: bold;
+            color: #f0ad4e;
+        }
+
+        #containerBusca {
+            display: block;
+            position: relative;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        #barraBusca {
+            width: 100%;
+            padding: 10px 38px;
+            height: 42px;
+            border-radius: 6px;
+            border: none;
+            background-color: #222;
+            color: #eee;
+        }
+
+        #btnLimparBusca {
+            position: absolute;
+            right: 10px;
+            top: 38%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: red;
+            font-size: 20px;
+            display: none;
+        }
+
+        #containerBusca span:first-child {
+            position: absolute;
+            left: 10px;
+            top: 38%;
+            transform: translateY(-50%);
+            color: #aaa;
+            font-size: 20px;
+        }
+
+        #resultado {
+            margin-top: 25px;
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 800px;
+        }
+
+        .registro-card {
+            background-color: rgba(255, 255, 255, 0.08);
+            color: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .registro-card strong {
+            color: #000000;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+            font-weight: 700;
+            letter-spacing: 0.4px;
+        }
+
+        .registro-valor {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 6px;
+            background-color: #28a745;
+            color: #fff;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .registro-valor.zero {
+            background-color: #e67e22;
+        }
+
+        .botao-voltar {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background-color: #6e3bff;
+            color: white;
+            padding: 12px 18px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 700;
+            box-shadow: 0 6px 14px #6e3bffbb;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            user-select: none;
+        }
+
+        .botao-voltar:hover {
+            background-color: #532bcc;
+            box-shadow: 0 8px 20px #532bcccc;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-box {
+            background-color: #121212;
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid #333;
+            text-align: center;
+            color: white;
+            max-width: 400px;
+        }
+
+        .modal-buttons {
+            margin-top: 20px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn-confirmar,
+        .btn-cancelar {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn-confirmar {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .btn-cancelar {
+            background-color: #dc3545;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>Consulta de Peças Automotivas</h1>
+        <p>Digite a placa e selecione o tipo de consulta desejado.</p>
+    </header>
+
+    <div class="container">
+        <h2>🔎 Consulta de Peças</h2>
+
+        <label for="placa">Placa do Veículo:</label>
+        <input type="text" id="placa" placeholder="Digite a placa (AAA0A00)" maxlength="7"
+            style="text-transform: uppercase;" />
+
+        <label for="tipoConsulta">Tipo de Consulta:</label>
+        <select id="tipoConsulta">
+            <option value="250">Ficha Técnica</option>
+            <option value="1">Consulta do Carro</option>
+        </select>
+
+        <button id="btnConsultar">🔍 Consultar Checktudo</button>
+
+        <p id="mensagem"></p>
+
+        <div id="containerBusca">
+            <span>🔍</span>
+            <input type="text" id="barraBusca" placeholder="Buscar nos resultados..." />
+            <span id="btnLimparBusca" title="Limpar busca">✖</span>
+        </div>
+    </div>
+
+    <div id="resultado"></div>
+
+    <div id="modalAviso" class="modal-overlay">
+        <div class="modal-box">
+            <h3>⚠️ CONSULTA PAGA</h3>
+            <p>
+                A <strong>PRIMEIRA CONSULTA</strong> deste veículo no nosso sistema terá um custo de
+                <strong style="color:#ffc107; font-size: 18px;">R$ 1,80</strong>.
+                <br><br>
+                As <strong>consultas futuras</strong> para o mesmo veículo serão <strong>GRATUITAS</strong>.
+                <br><br>
+                Deseja continuar?
+            </p>
+            <div class="modal-buttons">
+                <button id="btnConfirmar" class="btn-confirmar">Continuar</button>
+                <button id="btnCancelar" class="btn-cancelar">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <a href="Consulta.html" class="botao-voltar">⬅️ Voltar para Área de Consultas</a>
+
+    <script>
+        const SHEETS_API = "https://script.google.com/macros/s/AKfycbyyGk4S0tD39QUbCV5gO9wwi1CIsHEUP9ZczuWBXhxcpj0_wKhoX3jLd7hq6nkpUIkmNA/exec";
+        let API_TOKEN = null;
+        let registrosGlobais = [];
+        const MARCAS_BLOQUEADAS = [];
+
+        async function obterTokenChecktudo() {
+            try {
+                const resp = await fetch("https://api.checktudo.com.br/auth/login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ username: "caps.chacara@gmail.com", password: "Furlan@123" })
+                });
+                const data = await resp.json();
+                if (data?.body?.token) API_TOKEN = data.body.token;
+                else mostrarMensagem("Erro ao autenticar na API.", "erro");
+            } catch {
+                mostrarMensagem("Erro de conexão com a API.", "erro");
+            }
+        }
+        window.onload = obterTokenChecktudo;
+
+        document.getElementById("tipoConsulta").addEventListener("change", function () {
+            const tipo = this.value;
+            const campoBusca = document.getElementById("containerBusca");
+            campoBusca.style.display = tipo === "250" ? "block" : "none";
+        });
+
+        document.getElementById("btnConsultar").addEventListener("click", () => {
+            const placa = document.getElementById("placa").value.trim().toUpperCase();
+            const tipoConsulta = document.getElementById("tipoConsulta").value;
+            if (!/^[A-Z]{3}[0-9][0-9A-Z][0-9]{2}$/.test(placa)) {
+                mostrarMensagem("Informe uma placa válida no formato AAA0A00.", "erro");
+                return;
+            }
+            if (!API_TOKEN) {
+                mostrarMensagem("Token ainda não carregado.", "erro");
+                return;
+            }
+            window.placaParaConsulta = placa;
+            window.tipoConsultaSelecionada = tipoConsulta;
+            document.getElementById("modalAviso").style.display = "flex";
+        });
+
+        document.getElementById("btnCancelar").addEventListener("click", () => {
+            document.getElementById("modalAviso").style.display = "none";
+        });
+
+        document.getElementById("btnConfirmar").addEventListener("click", () => {
+            document.getElementById("modalAviso").style.display = "none";
+            consultarComCache(window.placaParaConsulta, window.tipoConsultaSelecionada);
+        });
+
+        async function consultarComCache(placa, tipoConsulta) {
+            mostrarMensagem("⏳ Verificando dados na planilha...", "sucesso");
+            try {
+                const cacheResp = await fetch(`${SHEETS_API}?placa=${placa}&tipo=${tipoConsulta}`);
+                const cacheData = await cacheResp.json();
+
+                if (cacheData.status !== "NOK") {
+                    if (tipoConsulta === "1") renderizarDadosCarro(cacheData);
+                    else {
+                        registrosGlobais = cacheData.body.data.cestaBasica?.registros || [];
+                        renderizarRegistros(registrosGlobais);
+                    }
+                    mostrarMensagem("✅ Dados carregados da planilha.", "sucesso");
+                    return;
+                }
+
+                mostrarMensagem("⏳ Consultando Checktudo...", "sucesso");
+                await consultarChecktudo(placa, tipoConsulta);
+            } catch {
+                mostrarMensagem("Erro ao consultar planilha.", "erro");
+            }
+        }
+
+        async function consultarChecktudo(placa, tipoConsulta) {
+            mostrarMensagem("⏳ Consultando Checktudo...", "sucesso");
+            try {
+                const API_URL = "https://api.checktudo.com.br/api/vehicle/68b197e1d3a9690cdaba8359";
+                const response = await fetch(API_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json", "Authorization": API_TOKEN },
+                    body: JSON.stringify({ querycode: Number(tipoConsulta), keys: { placa }, duplicity: false })
+                });
+                const data = await response.json();
+
+                if (tipoConsulta === "1") renderizarDadosCarro(data);
+                else {
+                    registrosGlobais = data.body?.data?.cestaBasica?.registros || [];
+                    renderizarRegistros(registrosGlobais);
+                }
+
+                await fetch(SHEETS_API, {
+                    method: "POST",
+                    body: JSON.stringify({ placa, tipoConsulta, json: data })
+                });
+
+                mostrarMensagem("✅ Consulta concluída e salva.", "sucesso");
+            } catch {
+                mostrarMensagem("Erro ao consultar Checktudo.", "erro");
+            }
+        }
+
+        function renderizarRegistros(registros) {
+            const resultado = document.getElementById("resultado");
+            resultado.innerHTML = "";
+
+            const registrosFiltrados = registros.filter(r =>
+                !(r.aposDescricaoFabricante && MARCAS_BLOQUEADAS.includes(r.aposDescricaoFabricante.toUpperCase()))
+            );
+
+            if (!registrosFiltrados.length) {
+                resultado.innerHTML = "<p style='color:orange;'>Nenhum registro encontrado.</p>";
+                return;
+            }
+
+            registrosFiltrados.forEach(registro => {
+                const valor = registro.valor
+                    ? Number(registro.valor).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
+                    : "R$ 0,00";
+
+                const card = document.createElement("div");
+                card.classList.add("registro-card");
+                card.innerHTML = `
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <div><strong>Código da Peça:</strong> ${registro.numeroPeca || "-"}</div>
+                        <div><strong>Peça:</strong> ${registro.apelidoDescricao || "-"}</div>
+                        <div><strong>Marca:</strong> ${registro.aposDescricaoFabricante || "-"}</div>
+                    </div>
+                    <div class="registro-valor ${valor === "R$ 0,00" ? "zero" : ""}">${valor}</div>
+                `;
+
+                resultado.appendChild(card);
+            });
+        }
+
+        function renderizarDadosCarro(data) {
+            const resultado = document.getElementById("resultado");
+            resultado.innerHTML = "";
+            const dados = data?.body?.data;
+            if (!dados) {
+                resultado.innerHTML = "<p style='color:orange;'>Dados do veículo não encontrados.</p>";
+                return;
+            }
+
+            let codigoFipe = "-";
+            let valorZeroKM = "-";
+            if (dados.codigoFipe && Array.isArray(dados.codigoFipe) && dados.codigoFipe.length > 0) {
+                codigoFipe = dados.codigoFipe[0].codigo || "-";
+                valorZeroKM = dados.codigoFipe[0].valorZeroKM
+                    ? Number(dados.codigoFipe[0].valorZeroKM).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
+                    : "-";
+            }
+
+            const campos = {
+                "Placa": dados.placa,
+                "Chassi": dados.chassi,
+                "Ano Fabricação": dados.anoFabricacao,
+                "Ano Modelo": dados.anoModelo,
+                "Marca": dados.marca,
+                "Modelo": dados.modelo,
+                "Marca/Modelo": dados.marcaModelo,
+                "Cor": dados.corVeiculo,
+                "Combustível": dados.combustivel,
+                "Cidade": dados.cidade,
+                "UF": dados.uf,
+                "Tipo Veículo": dados.tipoVeiculo,
+                "Categoria": dados.categoria,
+                "Código FIPE": codigoFipe,
+                "Valor 0 KM (Tabela FIPE)": valorZeroKM
+            };
+
+            let html = `<div class="registro-card" style="flex-direction: column; align-items: flex-start;">`;
+            for (const [campo, valor] of Object.entries(campos)) {
+                html += `<div style="margin: 4px 0;"><strong>${campo}:</strong> ${valor || "-"}</div>`;
+            }
+            html += `</div>`;
+
+            resultado.innerHTML = html;
+        }
+
+        function mostrarMensagem(texto, tipo) {
+            const msg = document.getElementById("mensagem");
+            msg.textContent = texto;
+            msg.className = "";
+            if (tipo) msg.classList.add(tipo);
+        }
+
+        // ===========================================
+        // FUNÇÃO DE BUSCA - FUNCIONANDO 100%
+        // ===========================================
+
+        const barraBusca = document.getElementById("barraBusca");
+        const btnLimparBusca = document.getElementById("btnLimparBusca");
+
+        barraBusca.addEventListener("input", () => {
+            const termo = barraBusca.value.trim().toLowerCase();
+
+            btnLimparBusca.style.display = termo.length > 0 ? "block" : "none";
+
+            if (!termo) {
+                renderizarRegistros(registrosGlobais);
+                return;
+            }
+
+            const filtrados = registrosGlobais.filter(registro => {
+                return (
+                    (registro.numeroPeca || "").toLowerCase().includes(termo) ||
+                    (registro.apelidoDescricao || "").toLowerCase().includes(termo) ||
+                    (registro.aposDescricaoFabricante || "").toLowerCase().includes(termo)
+                );
+            });
+
+            renderizarRegistros(filtrados);
+        });
+
+        btnLimparBusca.addEventListener("click", () => {
+            barraBusca.value = "";
+            btnLimparBusca.style.display = "none";
+            renderizarRegistros(registrosGlobais);
+        });
+
+    </script>
+</body>
+
+</html>

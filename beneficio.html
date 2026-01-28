@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Registro e Consulta de Benefícios Profissional</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet" />
+  <style>
+    /* Reset básico */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(rgba(10, 10, 10, 0.9), rgba(10, 10, 10, 0.9)), url('fundo menu.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: #eee;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px 20px;
+    }
+
+    header {
+      max-width: 900px;
+      width: 100%;
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    header h1 {
+      font-size: 3rem;
+      font-weight: 700;
+      color: #9a84ff;
+      margin-bottom: 0.4rem;
+      text-shadow: 0 0 0px #7a56ffaa;
+    }
+
+    header p {
+      font-size: 1.25rem;
+      color: #cfc9ffdd;
+      letter-spacing: 0.03em;
+      font-weight: 400;
+    }
+
+    main {
+      display: flex;
+      gap: 40px;
+      max-width: 900px;
+      width: 100%;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .box {
+      background: rgba(30, 30, 40, 0.9);
+      border-radius: 16px;
+      padding: 35px 30px;
+      box-shadow: 0 8px 28px rgba(122, 86, 255, 0.7);
+      flex: 1 1 400px;
+      max-width: 450px;
+      transition: box-shadow 0.3s ease;
+    }
+
+    .box:hover {
+      box-shadow: 0 12px 40px rgba(122, 86, 255, 1);
+    }
+
+    .box h2 {
+      color: #b9a9ff;
+      font-weight: 600;
+      font-size: 2rem;
+      margin-bottom: 28px;
+      border-bottom: 3px solid #7a56ff;
+      padding-bottom: 12px;
+      text-align: center;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+
+    input, select {
+      background-color: #2a2a3d;
+      color: #e1e1e9;
+      border: none;
+      border-radius: 12px;
+      padding: 14px 18px;
+      font-size: 1rem;
+      margin-bottom: 18px;
+      box-shadow: inset 1px 1px 6px #1a1a2d;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    input::placeholder {
+      color: #bbb;
+    }
+
+    input:focus, select:focus {
+      background-color: #3d2f9a;
+      outline: none;
+      box-shadow: 0 0 8px 2px #a589ff;
+      color: white;
+    }
+
+    button {
+      background-color: #7a56ff;
+      color: #fff;
+      font-weight: 700;
+      font-size: 1.15rem;
+      padding: 15px 0;
+      border: none;
+      border-radius: 14px;
+      cursor: pointer;
+      box-shadow: 0 6px 20px #7a56ffbb;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.15s ease;
+      user-select: none;
+    }
+
+    button:hover {
+      background-color: #5a3ccf;
+      box-shadow: 0 8px 26px #5a3ccfaa;
+      transform: scale(1.05);
+    }
+
+    .message {
+      margin-top: 18px;
+      padding: 15px 20px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 1rem;
+      text-align: center;
+      display: none;
+    }
+
+    .success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 2px solid #c3e6cb;
+    }
+
+    .error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 2px solid #f5c6cb;
+    }
+
+    #resultado {
+      margin-top: 24px;
+      background-color: rgba(255, 255, 255, 0.1);
+      padding: 28px;
+      border-radius: 16px;
+      color: #eaeaff;
+      font-size: 1rem;
+      line-height: 1.5;
+      border: 1.5px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 0 16px rgba(122, 86, 255, 0.5);
+      max-height: 320px;
+      overflow-y: auto;
+      user-select: text;
+      display: none;
+    }
+
+    #resultado p {
+      margin-bottom: 12px;
+    }
+
+    .status-verde {
+      color: #00ff90;
+      font-weight: 700;
+    }
+
+    .status-vermelho {
+      color: #ff5757;
+      font-weight: 700;
+    }
+
+    @media (max-width: 900px) {
+      main {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .box {
+        max-width: 100%;
+      }
+    }
+        /* Botão Voltar - manter como original */
+.botao-voltar {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  background-color: #6e3bff;
+  color: white;
+  padding: 12px 18px;
+  border-radius: 10px;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 700;
+  box-shadow: 0 6px 14px #6e3bffbb;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  user-select: none;
+}
+.botao-voltar:hover {
+  background-color: #532bcc;
+  box-shadow: 0 8px 20px #532bcccc;
+}
+
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Registro e Consulta de Benefícios</h1>
+    <p>Registre ou consulte um benefício pelo número da placa de forma rápida e segura.</p>
+  </header>
+
+  <main>
+    <section class="box">
+      <h2>Registrar Benefício</h2>
+      <form id="formRegistro">
+        <input type="text" name="nomeConsultor" placeholder="Nome do Consultor" required autocomplete="off" />
+
+        <select name="loja" required>
+          <option value="">Selecione a loja</option>
+          <option value="Jardins">Jardins</option>
+          <option value="Chácara">Chácara</option>
+          <option value="Mirandópolis">Mirandópolis</option>
+        </select>
+
+        <input type="text" name="beneficio" placeholder="Benefício" required autocomplete="off" />
+        <input type="date" name="validade" required />
+        <input type="text" name="placa" id="placa" placeholder="Placa do Carro (ABC-1234)" required maxlength="8" autocomplete="off" />
+        <input type="text" name="nomeCliente" placeholder="Nome do Cliente" required autocomplete="off" />
+        <input type="tel" name="telefone" id="telefone" placeholder="Telefone (99) 99999-9999" required maxlength="15" autocomplete="off" />
+        <button type="submit">✅ Salvar Benefício</button>
+      </form>
+      <div id="msgRegistro" class="message"></div>
+    </section>
+
+    <section class="box">
+      <h2>Consultar Benefício</h2>
+      <form id="formConsulta">
+        <input type="text" id="placaConsulta" placeholder="Digite a placa (ABC-1234)" required maxlength="8" autocomplete="off" />
+        <button type="submit">🔍 Consultar</button>
+      </form>
+      <div id="msgConsulta" class="message"></div>
+      <div id="resultado"></div>
+    </section>
+  </main>
+
+  <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbyAnkuk56bAMFlmyrbVfUqp7zuh9Yj1gDAiIFVkyTnBGz5TPheFrBg5guUyKIisrdGlAg/exec";
+
+    const msgRegistro = document.getElementById("msgRegistro");
+    const msgConsulta = document.getElementById("msgConsulta");
+    const resultado = document.getElementById("resultado");
+
+    function showMessage(element, text, type = 'success') {
+      element.className = `message ${type}`;
+      element.textContent = text;
+      element.style.display = 'block';
+      setTimeout(() => {
+        element.style.display = 'none';
+      }, 4000);
+    }
+
+    function getStatusClass(dataValidade) {
+      const hoje = new Date();
+      const validade = new Date(dataValidade);
+      validade.setHours(0, 0, 0, 0);
+      hoje.setHours(0, 0, 0, 0);
+      return validade >= hoje ? 'status-verde' : 'status-vermelho';
+    }
+
+    function formatarData(dataIso) {
+      const data = new Date(dataIso);
+      const dia = String(data.getDate()).padStart(2, '0');
+      const mes = String(data.getMonth() + 1).padStart(2, '0');
+      const ano = data.getFullYear();
+      return `${dia}/${mes}/${ano}`;
+    }
+
+    // Máscara e formatação para placa no registro
+    document.getElementById("placa").addEventListener("input", function (e) {
+      this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '').replace(/^(.{3})(.{0,4})$/, (m, g1, g2) => g1 + (g2 ? '-' + g2 : ''));
+    });
+
+    // Máscara e formatação para placa na consulta
+    document.getElementById("placaConsulta").addEventListener("input", function(e) {
+      this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '').replace(/^(.{3})(.{0,4})$/, (m, g1, g2) => g1 + (g2 ? '-' + g2 : ''));
+    });
+
+    // Máscara para telefone
+    document.getElementById("telefone").addEventListener("input", function (e) {
+      let v = this.value.replace(/\D/g, '');
+      if (v.length > 11) v = v.slice(0, 11);
+      v = v.replace(/^(\d{2})(\d)/g, '($1) $2');
+      v = v.replace(/(\d{5})(\d)/, '$1-$2');
+      this.value = v;
+    });
+
+    // Validação de formato da placa (ABC-1234)
+    function validarPlaca(placa) {
+        const padraoAntigo = /^[A-Z]{3}-\d{4}$/;
+        const padraoMercosul = /^[A-Z]{3}-[0-9A-Z]{4}$/;
+        return padraoAntigo.test(placa) || padraoMercosul.test(placa);
+      }
+
+    // Submit do registro de benefício
+    document.getElementById("formRegistro").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(e.target).entries());
+
+      try {
+        const res = await fetch(API_URL, {
+          method: "POST",
+          body: JSON.stringify(data)
+        });
+
+        if (res.ok) {
+          showMessage(msgRegistro, "✅ Benefício registrado com sucesso!", "success");
+          e.target.reset();
+        } else {
+          showMessage(msgRegistro, "❌ Erro ao registrar benefício. Tente novamente.", "error");
+        }
+      } catch (error) {
+        showMessage(msgRegistro, "❌ Erro de conexão. Verifique sua internet.", "error");
+      }
+    });
+
+    // Submit da consulta de benefício (ajustado para múltiplos resultados)
+    document.getElementById("formConsulta").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      resultado.style.display = "none";
+      const placa = document.getElementById("placaConsulta").value.trim().toUpperCase();
+
+      if (!validarPlaca(placa)) {
+        showMessage(msgConsulta, "Digite uma placa válida no formato ABC-1234.", "error");
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_URL}?placa=${encodeURIComponent(placa)}`);
+        const data = await res.json();
+
+        if (Array.isArray(data) && data.length > 0) {
+          resultado.innerHTML = data.map(item => {
+            const statusClass = getStatusClass(item.validade);
+            const statusText = statusClass === 'status-verde' ? "Válido" : "Expirado";
+
+            return `
+              <div style="margin-bottom: 20px; border-bottom: 1px solid #7a56ff66; padding-bottom: 10px;">
+                <p><b>Consultor:</b> ${item.nomeConsultor}</p>
+                <p><b>Loja:</b> ${item.loja}</p>
+                <p><b>Benefício:</b> ${item.beneficio}</p>
+                <p><b>Validade:</b> ${formatarData(item.validade)} - <span class="${statusClass}">${statusText}</span></p>
+                <p><b>Cliente:</b> ${item.nomeCliente}</p>
+                <p><b>Telefone:</b> ${item.telefone}</p>
+              </div>
+            `;
+          }).join('');
+          resultado.style.display = "block";
+        } else {
+          showMessage(msgConsulta, "❌ Nenhum benefício encontrado para esta placa.", "error");
+        }
+      } catch (error) {
+        showMessage(msgConsulta, "❌ Erro ao consultar benefício. Tente novamente.", "error");
+      }
+    });
+  </script>
+
+    <a href="index.html" class="botao-voltar">⬅️ Voltar para Home</a>
+
+</body>
+</html>

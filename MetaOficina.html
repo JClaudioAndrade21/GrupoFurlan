@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Painel de Resultados</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap">
+
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+    background:
+      linear-gradient(rgba(0, 0, 0, 0.88), rgba(0, 0, 0, 0.88)),
+      url("fundo menu.jpg") no-repeat center center fixed;
+    background-size: cover;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  header { text-align: center; margin-top: 40px; }
+
+  header h1 {
+    font-size: 40px;
+    font-weight: 700;
+    color: #b79eff;
+    text-shadow: 0 0 20px #6e3bff;
+    margin-bottom: 8px;
+  }
+
+  header p { font-size: 15px; color: #ccc; margin-bottom: 25px; }
+
+  .cards {
+    width: 90%;
+    max-width: 1200px;
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    flex-wrap: wrap;
+  }
+
+  .card {
+    flex: 1;
+    min-width: 260px;
+    background: linear-gradient(145deg, #3d1e9e, #6e3bff);
+    border-radius: 18px;
+    padding: 25px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    text-align: center;
+  }
+
+  .card h2 { color: #ffd700; font-size: 20px; margin-bottom: 10px; }
+  .card .valor { font-size: 28px; font-weight: 700; margin-bottom: 5px; }
+
+  .percent { font-size: 18px; font-weight: 700; }
+  .percent.ok { color: #00ff8c; }
+  .percent.bad { color: #ff4d4d; }
+
+  .titulo-secao {
+    width: 90%;
+    max-width: 1200px;
+    font-size: 22px;
+    font-weight: 700;
+    margin: 50px 0 10px;
+    color: #b79eff;
+    text-shadow: 0 0 15px #6e3bff;
+  }
+
+  table {
+    width: 90%;
+    max-width: 1200px;
+    border-collapse: collapse;
+    font-size: 14px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+
+  thead { background: #532bcc; }
+  th, td { text-align: left; padding: 12px; }
+
+  tbody tr { border-bottom: 1px solid rgba(255,255,255,0.1); }
+  tbody tr:hover { background: rgba(255,255,255,0.1); }
+
+  .linha-total { background: rgba(255,255,255,0.15); font-weight: 700; }
+
+  .btn-voltar {
+    position: fixed;
+    bottom: 25px;
+    left: 25px;
+    background-color: #6e3bff;
+    padding: 13px 20px;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 10px;
+    text-decoration: none;
+    color: #fff;
+    box-shadow: 0 10px 25px rgba(110,59,255,0.6);
+    transition: .25s;
+  }
+  .btn-voltar:hover {
+    background-color: #532bcc;
+    box-shadow: 0 12px 35px rgba(110,59,255,0.9);
+  }
+
+  footer { margin-top: auto; padding: 20px; color: #888; font-size: 12px; }
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>PAINEL DE RESULTADOS</h1>
+  <p>Acompanhamento em tempo real da Oficina</p>
+</header>
+
+<div class="cards">
+  <div class="card"><h2>Valor Vendido</h2><div class="valor" id="valVenda">-</div></div>
+  <div class="card"><h2>Valor Custo</h2><div class="valor" id="valCusto">-</div></div>
+  <div class="card"><h2>Valor Final</h2><div class="valor" id="valFinal">-</div><div class="percent bad" id="percentLucro">-</div></div>
+</div>
+
+<div class="titulo-secao">🚗 Carros no Pátio</div>
+<table>
+<thead><tr><th>Placa</th><th>OS</th><th>Valor</th><th>Consultor</th><th>Obs</th></tr></thead>
+<tbody id="tbodyPatio"></tbody>
+<tfoot><tr class="linha-total"><td colspan="2">TOTAL</td><td id="totalPatioVal">-</td><td colspan="2" id="totalPatioQtd">- Carros</td></tr></tfoot>
+</table>
+
+<div class="titulo-secao">Resumo por Mecânico</div>
+<table>
+<thead><tr><th>Mecânico</th><th>Diagnóstico</th><th>Serviço</th><th>Valor</th></tr></thead>
+<tbody id="tbodyMec"></tbody>
+</table>
+
+<div class="titulo-secao">Resumo por Orçamentista</div>
+<table>
+<thead><tr><th>Orçamentista</th><th>Valor</th><th>Quantidade</th></tr></thead>
+<tbody id="tbodyOrc"></tbody>
+</table>
+
+<div class="titulo-secao">🏆 MVP do Mês</div>
+<table>
+<thead><tr><th>Categoria</th><th>Vencedor</th></tr></thead>
+<tbody>
+<tr><td>Mecânico Destaque</td><td id="mvpMecanico">-</td></tr>
+<tr><td>Orçamentista Destaque</td><td id="mvpOrc">-</td></tr>
+</tbody>
+</table>
+
+<a class="btn-voltar" href="index.html">Voltar</a>
+<footer>© Oficina — Todos os direitos reservados</footer>
+
+<script>
+const sheetId = "1MKnDNlYj_eFZyz5EDh3IVSEpzNqB7hmCpyomnhAQEHA";
+
+// Função universal de fetch
+async function getSheet(sheetName) {
+  const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&sheet=${sheetName}`;
+  const res = await fetch(url);
+  const text = await res.text();
+  return JSON.parse(text.substr(47).slice(0, -2));
+}
+
+// ==== CARDS DO TOPO (Resumo) ====
+async function carregarResumo() {
+  const data = await getSheet("Meta");
+  const rows = data.table.rows;
+
+  const venda = rows[1].c[1].v || 0;
+  const custo = rows[2].c[1].v || 0;
+  const finalValor = rows[3].c[1].v || 0;
+  const percent = rows[4].c[1].v || 0;
+
+  document.getElementById("valVenda").innerText = 
+    "R$ " + venda.toLocaleString("pt-BR");
+
+  document.getElementById("valCusto").innerText = 
+    "R$ " + custo.toLocaleString("pt-BR");
+
+  document.getElementById("valFinal").innerText = 
+    "R$ " + finalValor.toLocaleString("pt-BR");
+
+  const percentElem = document.getElementById("percentLucro");
+  percentElem.innerText = (percent * 100).toFixed(2) + "%";
+  percentElem.classList.remove("ok","bad");
+  percentElem.classList.add(percent >= 0.5 ? "ok" : "bad");
+}
+
+
+// ==== CARROS NO PÁTIO (Patio) ====
+async function carregarPatio() {
+  const data = await getSheet("Patio");
+  const tbody = document.getElementById("tbodyPatio");
+  tbody.innerHTML = "";
+
+  let total = 0, qtd = 0;
+
+  data.table.rows.forEach(row => {
+    if (!row.c[0]?.v) return;
+
+    qtd++;
+    const valor = row.c[3]?.v || 0;
+    total += valor;
+
+    tbody.innerHTML += `
+      <tr>
+        <td>${row.c[0]?.v || "-"}</td>
+        <td>${row.c[2]?.v || "-"}</td>
+        <td>R$ ${valor.toLocaleString("pt-BR")}</td>
+        <td>${row.c[1]?.v || "-"}</td>
+        <td>${row.c[4]?.v || "-"}</td>
+      </tr>`;
+  });
+
+  document.getElementById("totalPatioVal").innerText = 
+    "R$ " + total.toLocaleString("pt-BR");
+  document.getElementById("totalPatioQtd").innerText = 
+    `${qtd} Carros`;
+}
+
+
+// ==== RESUMO MECÂNICO / ORÇAMENTISTA ====
+async function carregarEquipe() {
+  const data = await getSheet("Equipe");
+  const tbodyM = document.getElementById("tbodyMec");
+  const tbodyO = document.getElementById("tbodyOrc");
+  tbodyM.innerHTML = "";
+  tbodyO.innerHTML = "";
+
+  data.table.rows.forEach(row => {
+    const mec = row.c[0]?.v;
+    const orc = row.c[5]?.v;
+
+    if (mec) {
+      tbodyM.innerHTML += `
+        <tr>
+          <td>${mec}</td>
+          <td>${row.c[1]?.v || 0}</td>
+          <td>${row.c[2]?.v || 0}</td>
+          <td>R$ ${(row.c[3]?.v || 0).toLocaleString("pt-BR")}</td>
+        </tr>`;
+    }
+
+    if (orc) {
+      tbodyO.innerHTML += `
+        <tr>
+          <td>${orc}</td>
+          <td>R$ ${(row.c[6]?.v || 0).toLocaleString("pt-BR")}</td>
+          <td>${row.c[7]?.v || 0}</td>
+        </tr>`;
+    }
+  });
+}
+
+
+// ==== DISPARO GERAL ====
+carregarResumo();
+carregarPatio();
+carregarEquipe();
+
+// ==== MVP DO MÊS ====
+// calcular MVP após carregar dados
+function calcularMVP() {
+
+  const tbodyM = document.querySelectorAll("#tbodyMec tr");
+  const mecData = [];
+
+  tbodyM.forEach(row => {
+    const cols = row.querySelectorAll("td");
+    const nome = cols[0].innerText;
+    const diag = Number(cols[1].innerText);
+    const serv = Number(cols[2].innerText);
+    const valor = Number(cols[3].innerText.replace(/\D+/g, "")) / 100;
+
+    const pontos = diag + serv + (valor / 1000);
+    mecData.push({ nome, diag, serv, valor, pontos });
+  });
+
+  mecData.sort((a,b) =>
+    b.pontos - a.pontos || b.valor - a.valor
+  );
+  const mvpMec = mecData[0];
+
+
+  const tbodyO = document.querySelectorAll("#tbodyOrc tr");
+  const orcData = [];
+
+  tbodyO.forEach(row => {
+    const cols = row.querySelectorAll("td");
+    const nome = cols[0].innerText;
+    const valor = Number(cols[1].innerText.replace(/\D+/g, "")) / 100;
+    const qtd = Number(cols[2].innerText);
+
+    const pontos = valor * 2 + qtd;
+    orcData.push({ nome, valor, qtd, pontos });
+  });
+
+  orcData.sort((a,b) =>
+    b.pontos - a.pontos || b.valor - a.valor
+  );
+  const mvpOrc = orcData[0];
+
+  // render MVP
+  document.getElementById("mvpMecanico").innerHTML = 
+  `<strong>${mvpMec.nome}</strong>`;
+
+document.getElementById("mvpOrc").innerHTML = 
+  `<strong>${mvpOrc.nome}</strong>`;
+}
+
+
+// chamar MVP ao finalizar carregamento
+setTimeout(calcularMVP, 1500);
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Área de Consultas - Grupo Furlan</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    background: 
+      linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)),
+      url("fundo menu.jpg") no-repeat center center fixed;
+    background-size: cover;
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  header {
+    text-align: center;
+    margin-top: 60px;
+  }
+
+  header h1 {
+    font-size: 36px;
+    font-weight: 700;
+    color: #b79eff;
+    text-shadow: 0 0 15px #6e3bff;
+  }
+
+  header p {
+    color: #ccc;
+    margin-top: 8px;
+  }
+
+  .menu {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 25px;
+    width: 90%;
+    max-width: 800px;
+    margin-top: 40px;
+  }
+
+  .btn-consulta {
+    background: linear-gradient(145deg, #3d1e9e, #6e3bff);
+    border: none;
+    border-radius: 15px;
+    color: #fff;
+    font-size: 18px;
+    font-weight: 600;
+    padding: 25px 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 18px rgba(0,0,0,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .btn-consulta i {
+    font-size: 22px;
+    color: #ffd700;
+  }
+
+  .btn-consulta:hover {
+    transform: translateY(-5px);
+    background: linear-gradient(145deg, #532bcc, #8858ff);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.6);
+  }
+
+  /* Botão Voltar */
+  .botao-voltar {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background-color: #6e3bff;
+    color: white;
+    padding: 12px 18px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 700;
+    box-shadow: 0 6px 14px #6e3bffbb;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    user-select: none;
+  }
+
+  .botao-voltar:hover {
+    background-color: #532bcc;
+    box-shadow: 0 8px 20px #532bcccc;
+  }
+
+  footer {
+    margin-top: auto;
+    padding: 20px;
+    color: #888;
+    font-size: 14px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Área de Consultas</h1>
+  <p>Escolha abaixo a opção desejada:</p>
+</header>
+
+<div class="menu">
+  <button class="btn-consulta" onclick="PaginaConsultaPeças()">
+    <i class="fas fa-tools"></i> Consulta de Peças
+  </button>
+
+  <button class="btn-consulta" onclick="PaginaConsultaMaoDeObra()">
+    <i class="fas fa-user-cog"></i> Mão de Obra
+  </button>
+
+  <button class="btn-consulta" onclick="PaginaConsultaBateria()">
+    <i class="fas fa-car-battery"></i> Bateria
+  </button>
+
+  <button class="btn-consulta" onclick="PaginaConsultaFiltros()">
+    <i class="fas fa-filter"></i> Óleo e Filtro
+  </button>
+
+  <button class="btn-consulta" onclick="PaginaConsultaFornecedores()">
+    <i class="fas fa-store"></i> Fornecedores
+  </button>
+
+  <button class="btn-consulta" onclick="PaginaConsultaFipe()">
+    <i class="fas fa-car"></i> Consulta Ticket Log
+  </button>
+</div>
+
+<a href="index.html" class="botao-voltar">⬅️ Voltar para Home</a>
+
+<footer>
+  © 2025 Grupo Furlan — Todos os direitos reservados
+</footer>
+
+<script>
+  function PaginaConsultaPeças() { window.location.href = "ConsultaPeças.html"; }
+  function PaginaConsultaMaoDeObra() { window.location.href = "consulta-mao-de-obra.html"; }
+  function PaginaConsultaFiltros() { window.location.href = "ConsultaDeFiltros.html"; }
+  function PaginaConsultaBateria() { window.location.href = "ConsultaDeBateria.html"; }
+  function PaginaConsultaFornecedores() { window.location.href = "ConsultaDeFornecedores.html"; }
+  function PaginaConsultaFipe() { window.location.href = "Consulta-Ticket.html"; } // novo botão FIPE
+</script>
+
+</body>
+</html>

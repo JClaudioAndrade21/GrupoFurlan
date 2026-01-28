@@ -1,0 +1,4 @@
+cd C:\Users\VAIO\Desktop\MeuSite1.0
+python -m http.server 8000
+
+C:\Users\VAIO\Desktop\MeuSite1.0\HOME

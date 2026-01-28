@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Furlan Oficina</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      background:
+        linear-gradient(rgba(28, 28, 28, 0.92), rgba(28, 28, 28, 0.92)),
+        url('fundo menu.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: #e0e0e0;
+      min-height: 100vh;
+      padding: 2rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    header {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    header img {
+      width: 100%;
+      height: 35vh;
+      object-fit: cover;
+      display: block;
+    }
+
+    nav.menu-box {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      background: rgba(30, 30, 30, 0.95);
+      padding: 15px 0;
+      border-bottom: 2px solid #7a56ff88;
+      box-shadow: 0 4px 15px rgb(0, 0, 0);
+      width: 100%;
+    }
+
+    nav.menu-box a {
+      color: #dcdcdc;
+      font-weight: 600;
+      font-size: 1.1rem;
+      padding: 8px 16px;
+      border-radius: 8px;
+      transition: 0.3s ease;
+    }
+
+    nav.menu-box a:hover {
+      background: #7a56ff88;
+      color: #fff;
+    }
+
+    .hero {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 80px 20px 60px;
+    }
+
+    .hero h1 {
+      font-size: 2.6rem;
+      color: #7a56ffcc;
+      margin-bottom: 10px;
+      text-shadow: 0 0 10px #7a56ff88;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      color: #bbb;
+      margin-bottom: 40px;
+    }
+
+    /* Grade dos botões: 2 por linha */
+    .container {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 25px;
+      justify-items: center;
+      align-items: center;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .card-btn {
+      background: #2e2e2e;
+      border: 2px solid #7a56ff55;
+      border-radius: 16px;
+      padding: 35px 20px;
+      width: 260px;
+      text-align: center;
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+    }
+
+    .card-btn i {
+      font-size: 2.2rem;
+      margin-bottom: 15px;
+      color: #7a56ffcc;
+    }
+
+    .card-btn:hover {
+      background: #7a56ff22;
+      transform: translateY(-6px);
+      box-shadow: 0 8px 22px rgba(0,0,0,0.7), 0 0 18px #7a56ff88;
+    }
+
+    .card-btn span {
+      display: block;
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    footer {
+      text-align: center;
+      padding: 15px;
+      font-size: 0.9rem;
+      color: #ffffff;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="logo-furlan.png" alt="Logo da Oficina Grupo Furlan" />
+    <nav class="menu-box" role="navigation" aria-label="Menu principal">
+      <a href="index.html">Home</a>
+      <a href="sobre.html">Sobre</a>
+      <a href="contato.html">Contato</a>
+      <a href="MetaOficina.html">Meta</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h1>Bem-vindo ao Grupo Furlan</h1>
+    <p>Escolha uma das opções abaixo para continuar:</p>
+
+    <div class="container">
+      <div class="card-btn" onclick="PaginaConsulta()">
+        <i class="fas fa-chart-bar"></i>
+        <span>Consultas</span>
+      </div>
+      <div class="card-btn" onclick="PaginaAgendamento()">
+        <i class="fas fa-bolt"></i>
+        <span>Agendamento</span>
+      </div>
+      <div class="card-btn" onclick="PaginaBeneficio()">
+        <i class="fas fa-gift"></i>
+        <span>Área de Benefícios</span>
+      </div>
+      <div class="card-btn" onclick="PaginaBots()">
+        <i class="fas fa-robot"></i>
+        <span>Bots</span>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2025 Grupo Furlan — Todos os direitos reservados</p>
+  </footer>
+
+  <script>
+    function PaginaConsulta() { window.location.href = "consulta.html"; }
+    function PaginaAgendamento() { window.location.href = "agendamento.html"; }
+    function PaginaBeneficio() { window.location.href = "beneficio.html"; }
+    function PaginaBots() { window.location.href = "Bots.html"; }
+  </script>
+</body>
+</html>

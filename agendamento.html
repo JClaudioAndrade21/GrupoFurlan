@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Agendamento - Grupo Furlan</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      background: linear-gradient(rgba(28, 28, 28, 0.92), rgba(28, 28, 28, 0.92)),
+        url('fundo menu.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: #e0e0e0;
+      min-height: 100vh;
+      padding: 2rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    header {
+      background: rgba(25, 25, 25, 0.9);
+      padding: 2rem 2.5rem;
+      border-radius: 20px;
+      box-shadow: 0 12px 30px rgba(50, 0, 150, 0.4);
+      max-width: 900px;
+      width: 100%;
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    header h1 {
+      font-size: clamp(2.5rem, 5vw, 3.2rem);
+      margin: 0;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      text-shadow: 0 0 10px #8a56ff88;
+      color: #dcd6f7;
+    }
+    nav { margin-top: 1.5rem; }
+    nav a {
+      margin: 0 1rem;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #a87aff;
+      padding: 10px 18px;
+      border-radius: 14px;
+      transition: 0.25s ease;
+    }
+    nav a:hover {
+      background-color: #a87aff;
+      color: #fff;
+      box-shadow: 0 4px 10px #a87affaa;
+    }
+    main {
+      max-width: 600px;
+      width: 100%;
+      background: rgba(40, 40, 40, 0.85);
+      padding: 2rem;
+      border-radius: 20px;
+      box-shadow: 0 12px 35px rgba(110, 86, 255, 0.6);
+    }
+    main h2 {
+      text-align: center;
+      margin-bottom: 2rem;
+      font-size: 2rem;
+      color: #b296ff;
+      text-shadow: 0 0 10px #b296ffcc;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    h3 {
+      margin-top: 1.5rem;
+      margin-bottom: 0.5rem;
+      color: #cdb8ff;
+      font-size: 1.2rem;
+    }
+    hr {
+      border: 0;
+      height: 1px;
+      background: #6e56ff44;
+      margin-bottom: 1rem;
+    }
+    form { display: flex; flex-direction: column; }
+    .form-row {
+      display: flex;
+      gap: 1.25rem;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      flex: 1 1 200px;
+    }
+    label {
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #cdb8ff;
+    }
+    input, select {
+      padding: 12px;
+      border: 1px solid #6e56ff;
+      border-radius: 8px;
+      font-size: 1rem;
+      background-color: #282828;
+      color: #e0e0e0;
+      transition: border-color 0.3s, box-shadow 0.3s;
+      outline: none;
+    }
+    input::placeholder, select::placeholder { color: #9a7effaa; font-style: italic; }
+    input:focus, select:focus {
+      border-color: #a87aff;
+      box-shadow: 0 0 8px #a87affaa;
+      background-color: #3a3a3a;
+    }
+    input:valid { border-color: #2ecc71; }
+    input:invalid:focus { border-color: #e74c3c; }
+    button[type="submit"] {
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+      color: #fff;
+      border: none;
+      padding: 14px;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(101, 50, 200, 0.7);
+      margin-top: 1rem;
+    }
+    button[type="submit"]:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(101, 50, 200, 1);
+    }
+/* Botão Voltar */
+        .botao-voltar {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background-color: #6e3bff;
+            color: white;
+            padding: 12px 18px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 700;
+            box-shadow: 0 6px 14px #6e3bffbb;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            user-select: none;
+        }
+
+        .botao-voltar:hover {
+            background-color: #532bcc;
+            box-shadow: 0 8px 20px #532bcccc;
+        }
+
+    .mensagem {
+      margin-top: 1rem;
+      padding: 12px;
+      border-radius: 8px;
+      display: none;
+    }
+    .mensagem.sucesso {
+      background: #2ecc71;
+      color: #fff;
+    }
+    .mensagem.erro {
+      background: #e74c3c;
+      color: #fff;
+    }
+    @media (max-width: 600px) {
+      main { padding: 1.5rem; max-width: 100%; }
+      .form-row { flex-direction: column; }
+      .form-group { flex: 1 1 100%; }
+    }
+  </style>
+</head>
+<body>
+<header>
+  <h1>Agendamento</h1>
+</header>
+<main>
+  <h2>Agendamento de Serviço</h2>
+  <form id="form-agendamento" novalidate>
+    
+    <h3>Dados do Cliente</h3>
+    <hr>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="nome">Nome do cliente:</label>
+        <input type="text" id="nome" name="nome" required autocomplete="name" />
+      </div>
+      <div class="form-group">
+        <label for="telefone">Telefone:</label>
+        <input type="tel" id="telefone" name="telefone" placeholder="(00) 00000-0000" required maxlength="15" autocomplete="tel" />
+      </div>
+    </div>
+
+    <h3>Dados do Veículo</h3>
+    <hr>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="placa">Placa do Veículo:</label>
+        <input type="text" id="placa" name="placa" placeholder="AAA-0A00" maxlength="8" autocomplete="off" required />
+      </div>
+    </div>
+
+    <h3>Serviço</h3>
+    <hr>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="orcamento">Foi enviado o orçamento?</label>
+        <select id="orcamento" name="orcamento" required onchange="toggleNumeroOS(this.value)">
+          <option value="">Selecione...</option>
+          <option value="Sim">Sim</option>
+          <option value="Não">Não</option>
+        </select>
+      </div>
+      <div class="form-group" id="campo-numero-os" style="display:none;">
+        <label for="numeroOS">Número da OS:</label>
+        <input type="text" id="numeroOS" name="numeroOS" autocomplete="off" />
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group" style="flex-grow:1;">
+        <label for="servico">Tipo de Serviço:</label>
+        <select id="servico" name="servico" required onchange="mostrarCampoOutroServico(this.value)">
+          <option value="">Selecione...</option>
+          <option value="Check-Up em Mais de 30 Itens">Check-Up em Mais de 30 Itens</option>
+          <option value="Revisão Personalizada">Revisão Personalizada</option>
+          <option value="Troca de óleo e filtros">Troca de óleo e filtros</option>
+          <option value="Revisão de freios">Revisão de freios</option>
+          <option value="Luz painel">Luz painel</option>
+          <option value="Outro">Outro</option>
+        </select>
+      </div>
+      <div class="form-group" id="campo-outro-servico" style="display:none; flex-grow:1;">
+        <label for="outroServico">Descreva o serviço:</label>
+        <input type="text" id="outroServico" name="outroServico" autocomplete="off" />
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group" style="flex-grow:1;">
+        <label for="data">Data e Hora:</label>
+        <input type="datetime-local" id="data" name="data" required />
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group" style="flex-grow:1;">
+        <label for="orcamentista">Nome do Orçamentista:</label>
+        <input type="text" id="orcamentista" name="orcamentista" placeholder="Digite o nome do responsável" autocomplete="name" required />
+      </div>
+    </div>
+
+    <button type="submit" aria-label="Agendar serviço">Agendar</button>
+  </form>
+
+      <a href="index.html" class="botao-voltar">⬅️ Voltar para Home</a>
+  <div id="mensagem" class="mensagem"></div>
+</main>
+
+<script>
+  // Bloquear datas passadas
+  document.getElementById("data").min = new Date().toISOString().slice(0,16);
+
+  // Mostrar campo "Outro serviço"
+  function mostrarCampoOutroServico(valor) {
+    const campoOutro = document.getElementById("campo-outro-servico");
+    if (valor === "Outro") {
+      campoOutro.style.display = "block";
+      document.getElementById("outroServico").required = true;
+    } else {
+      campoOutro.style.display = "none";
+      document.getElementById("outroServico").required = false;
+    }
+  }
+
+  // Mostrar campo "Número da OS"
+  function toggleNumeroOS(valor) {
+    const campoOS = document.getElementById("campo-numero-os");
+    const inputOS = document.getElementById("numeroOS");
+    if (valor === "Sim") {
+      campoOS.style.display = "block";
+      inputOS.required = true;
+    } else {
+      campoOS.style.display = "none";
+      inputOS.required = false;
+      inputOS.value = "";
+    }
+  }
+
+  // Máscara telefone
+  const telefoneInput = document.getElementById("telefone");
+  telefoneInput.addEventListener("input", function(e) {
+    let v = e.target.value.replace(/\D/g, "");
+    if (v.length > 11) v = v.slice(0,11);
+    if (v.length > 10) v = v.replace(/^(\d{2})(\d{5})(\d{4}).*/, "($1) $2-$3");
+    else if (v.length > 5) v = v.replace(/^(\d{2})(\d{4})(\d{0,4}).*/, "($1) $2-$3");
+    else if (v.length > 2) v = v.replace(/^(\d{2})(\d{0,5})/, "($1) $2");
+    else if (v.length > 0) v = v.replace(/^(\d*)/, "($1");
+    e.target.value = v;
+  });
+
+  // Máscara placa (AAA-0A00)
+  const placaInput = document.getElementById("placa");
+  placaInput.addEventListener("input", function(e) {
+    let v = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "");
+    if (v.length > 7) v = v.slice(0,7);
+    if (v.length > 3) v = v.replace(/^([A-Z]{3})([0-9A-Z]{1,4})/, "$1-$2");
+    e.target.value = v;
+  });
+
+  // Envio do formulário
+  document.getElementById("form-agendamento").addEventListener("submit", function (e) {
+    e.preventDefault();
+    const mensagem = document.getElementById("mensagem");
+
+    const nome = document.getElementById("nome").value.trim();
+    const telefone = document.getElementById("telefone").value.trim();
+    const placa = document.getElementById("placa").value.trim();
+    const orcamento = document.getElementById("orcamento").value;
+    const numeroOS = document.getElementById("numeroOS").value.trim();
+    const servicoSelecionado = document.getElementById("servico").value;
+    const outroServico = document.getElementById("outroServico").value.trim();
+    const orcamentista = document.getElementById("orcamentista").value.trim();
+    const data = document.getElementById("data").value;
+
+    if (!nome || !telefone || !placa || !orcamento || !servicoSelecionado || !data || !orcamentista) {
+      mensagem.textContent = "⚠️ Por favor, preencha todos os campos obrigatórios.";
+      mensagem.className = "mensagem erro";
+      mensagem.style.display = "block";
+      return;
+    }
+
+    if (orcamento === "Sim" && numeroOS === "") {
+      mensagem.textContent = "⚠️ Você marcou que o orçamento foi enviado, então o número da OS é obrigatório.";
+      mensagem.className = "mensagem erro";
+      mensagem.style.display = "block";
+      return;
+    }
+
+    if (servicoSelecionado === "Outro" && outroServico === "") {
+      mensagem.textContent = "⚠️ Você selecionou 'Outro' como tipo de serviço. Por favor, descreva o serviço.";
+      mensagem.className = "mensagem erro";
+      mensagem.style.display = "block";
+      return;
+    }
+
+    const continuar = confirm(
+      "⚠️ Atenção! \n\n" +
+      "Por favor, certifique-se que está logado na CONTA GOOGLE que utiliza para seus agendamentos.\n\n" +
+      "Deseja continuar?"
+    );
+    if (!continuar) return;
+
+    const servicoFinal = servicoSelecionado === "Outro" ? outroServico : servicoSelecionado;
+    const dataInicio = new Date(data);
+    const dataFim = new Date(dataInicio.getTime() + 60 * 60 * 1000);
+    const formatar = (date) => date.toISOString().replace(/[-:]|\.\d{3}/g, "").slice(0, 15) + "Z";
+    const inicio = formatar(dataInicio);
+    const fim = formatar(dataFim);
+
+    let descricao = `Cliente: ${nome}%0ATelefone: ${telefone}%0APlaca: ${placa}%0AServiço: ${servicoFinal}%0AOrçamento enviado: ${orcamento}`;
+    if (orcamento === "Sim") descricao += `%0ANúmero da OS: ${numeroOS}`;
+    descricao += `%0AOrçamentista: ${orcamentista}`;
+
+    const titulo = `Agendamento: ${servicoFinal}`;
+    const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(titulo)}&dates=${inicio}/${fim}&details=${descricao}`;
+
+    window.open(url, "_blank");
+
+    mensagem.textContent = "✅ Agendamento criado! Finalize no Google Agenda (aba aberta).";
+    mensagem.className = "mensagem sucesso";
+    mensagem.style.display = "block";
+    this.reset();
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Consulta de Óleo e Filtros Automotivo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(rgba(45, 45, 45, 0.9), rgba(45, 45, 45, 0.9)), url('fundo menu.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    header {
+      text-align: center;
+      padding: 40px 20px 20px;
+    }
+
+    header h1 {
+      font-size: 32px;
+      margin-bottom: 10px;
+    }
+
+    header p {
+      font-size: 16px;
+      color: #ccc;
+    }
+
+    .container {
+      background-color: rgba(0, 0, 0, 0.6);
+      padding: 30px 20px;
+      border-radius: 15px;
+      max-width: 650px;
+      width: 90%;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      margin-bottom: 5px;
+      font-size: 16px;
+    }
+
+    select {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      margin-bottom: 10px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      font-size: 18px;
+      border: none;
+      border-radius: 5px;
+      background-color: #7a56ff;
+      color: white;
+      cursor: pointer;
+      margin-top: 15px;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #5a3ccf;
+    }
+
+    #resultado {
+      margin-top: 25px;
+      background-color: rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      border-radius: 10px;
+    }
+
+    ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    li {
+      margin-bottom: 12px;
+      padding: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 6px;
+    }
+
+    .total {
+      margin-top: 20px;
+      font-size: 20px;
+      font-weight: bold;
+      text-align: right;
+      color: #00ff9d;
+      padding: 10px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 8px;
+    }
+
+    /* Botão Voltar - manter como original */
+.botao-voltar {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  background-color: #6e3bff;
+  color: white;
+  padding: 12px 18px;
+  border-radius: 10px;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 700;
+  box-shadow: 0 6px 14px #6e3bffbb;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  user-select: none;
+}
+.botao-voltar:hover {
+  background-color: #532bcc;
+  box-shadow: 0 8px 20px #532bcccc;
+}
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Consulta de Óleo e Filtros Automotivo</h1>
+    <p>Selecione a marca, montadora e modelo do veículo para visualizar os filtros e peças disponíveis.</p>
+  </header>
+
+  <div class="container">
+    <label for="marca">1️⃣ Selecione a Marca:</label>
+    <select id="marca" onchange="filtrarMontadoras()">
+      <option value="">-- Escolha uma Marca --</option>
+    </select>
+
+    <label for="montadora">2️⃣ Agora escolha a Montadora:</label>
+    <select id="montadora" onchange="filtrarModelos()">
+      <option value="">-- Escolha a Montadora --</option>
+    </select>
+
+    <label for="modelo">3️⃣ Por fim, selecione o Modelo:</label>
+    <select id="modelo">
+      <option value="">-- Escolha o Modelo --</option>
+    </select>
+
+    <button onclick="consultar()">🔍 Consultar Filtros</button>
+
+    <div id="resultado"></div>
+  </div>
+
+  <script>
+    const urlAPI = 'https://script.google.com/macros/s/AKfycbxeOIIogc3DgByjiRADJs04gqlrnJo13oL_7YgR9QJUz7sn7lzGXbKsA-voVv9qZDYu/exec';
+    let dadosPlanilha = [];
+
+    async function carregarDados() {
+      try {
+        const res = await fetch(urlAPI);
+        const json = await res.json();
+        console.log("Resposta da API:", json);
+
+        let data = Array.isArray(json) ? json : json.data;
+        if (!Array.isArray(data)) {
+          console.error("Data não é um array:", data);
+          return;
+        }
+
+        dadosPlanilha = data;
+        const marcas = [...new Set(data.map(item => item['Marca']))];
+        const marcaSelect = document.getElementById('marca');
+
+        marcas.forEach(m => {
+          const opt = document.createElement('option');
+          opt.value = m;
+          opt.textContent = m;
+          marcaSelect.appendChild(opt);
+        });
+      } catch (e) {
+        alert('Erro ao carregar os dados da planilha!');
+        console.error(e);
+      }
+    }
+
+    function filtrarMontadoras() {
+      const marca = document.getElementById('marca').value;
+      const montadoraSelect = document.getElementById('montadora');
+      montadoraSelect.innerHTML = '<option value="">-- Escolha a Montadora --</option>';
+      document.getElementById('modelo').innerHTML = '<option value="">-- Escolha o Modelo --</option>';
+
+      const montadoras = [...new Set(dadosPlanilha
+        .filter(item => item['Marca'] === marca)
+        .map(item => item['Montadora']))];
+
+      montadoras.forEach(m => {
+        const opt = document.createElement('option');
+        opt.value = m;
+        opt.textContent = m;
+        montadoraSelect.appendChild(opt);
+      });
+    }
+
+    function filtrarModelos() {
+      const marca = document.getElementById('marca').value;
+      const montadora = document.getElementById('montadora').value;
+      const modeloSelect = document.getElementById('modelo');
+      modeloSelect.innerHTML = '<option value="">-- Escolha o Modelo --</option>';
+
+      const modelos = [...new Set(dadosPlanilha
+        .filter(item => item['Marca'] === marca && item['Montadora'] === montadora)
+        .map(item => item['Modelo']))];
+
+      modelos.forEach(m => {
+        const opt = document.createElement('option');
+        opt.value = m;
+        opt.textContent = m;
+        modeloSelect.appendChild(opt);
+      });
+    }
+
+    function formatarValor(valor) {
+      let num = parseFloat(valor);
+      if (isNaN(num)) num = 0;
+      return num;
+    }
+
+    function consultar() {
+      const marca = document.getElementById('marca').value;
+      const montadora = document.getElementById('montadora').value;
+      const modelo = document.getElementById('modelo').value;
+
+      const item = dadosPlanilha.find(i =>
+        i['Marca'] === marca &&
+        i['Montadora'] === montadora &&
+        i['Modelo'] === modelo
+      );
+
+      if (!item) {
+        document.getElementById('resultado').innerHTML = `<strong>❌ Nenhuma peça encontrada para os dados selecionados.</strong>`;
+        return;
+      }
+
+      let total = 0;
+      const valores = [
+  { nome: "Filtro de óleo", valor: item["Filtro Óleo Preço"], desc: item["Filtro Óleo Nome"] },
+  { nome: "Filtro de ar", valor: item["Filtro Ar Preço"], desc: item["Filtro Ar Nome"] },
+  { nome: "Filtro de cabine", valor: item["Filtro Cabine Preço"], desc: item["Filtro Cabine Nome"] },
+  { nome: "Filtro de combustível", valor: item["Filtro Combustível Preço"], desc: item["Filtro Combustível Nome"] },
+  { nome: "Óleo", valor: item["Óleo Preço"], desc: item["Óleo Nome"] },
+  { nome: "Anel de vedação", valor: item["Anel de vedação Preço"], desc: item["Anel de vedação Nome"] } // 🔥 Novo item
+];
+
+
+      const lista = valores.map(v => {
+        const preco = formatarValor(v.valor);
+        total += preco;
+        return `<li><strong>${v.nome}:</strong> ${v.desc} - R$ ${preco.toFixed(2).replace('.', ',')}</li>`;
+      }).join("");
+
+      const html = `
+        <h3>Resultado da Consulta:</h3>
+        <ul>${lista}</ul>
+        <div class="total">💰 Total: R$ ${total.toFixed(2).replace('.', ',')}</div>
+      `;
+
+      document.getElementById('resultado').innerHTML = html;
+    }
+
+    carregarDados();
+  </script>
+    <!-- Botão Voltar -->
+  <a href="Consulta.html" class="botao-voltar">⬅️ Voltar para Área de Consultas</a>
+</body>
+</html>

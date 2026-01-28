@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bot de Cancelamento</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(rgba(30,30,30,0.9), rgba(30,30,30,0.9)),
+                  url('fundo menu.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 {
+      margin-top: 30px;
+      font-size: 36px;
+      color: #a98bff;
+      text-shadow: 0 0 15px #7a56ff;
+      text-align: center;
+    }
+
+    .container {
+      background-color: rgba(0,0,0,0.75);
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+      max-width: 650px;
+      width: 90%;
+      margin-top: 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    button {
+      background-color: #7a56ff;
+      color: white;
+      border: none;
+      padding: 14px 22px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 15px;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background-color: #5a3ccf;
+    }
+
+    input[type="file"] {
+      margin-top: 10px;
+      padding: 6px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+    }
+
+    #logs {
+      background: #111;
+      color: #0f0;
+      font-family: monospace;
+      font-size: 13px;
+      padding: 15px;
+      border-radius: 8px;
+      height: 300px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+    }
+
+    #status {
+      margin-top: 10px;
+      font-weight: bold;
+      color: #fff;
+      text-align: center;
+    }
+
+    .botao-voltar {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background-color: #6e3bff;
+      color: white;
+      padding: 12px 18px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: 700;
+      box-shadow: 0 6px 16px #6e3bffbb;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      user-select: none;
+    }
+
+    .botao-voltar:hover {
+      background-color: #532bcc;
+      box-shadow: 0 8px 22px #532bcccc;
+    }
+
+    .control-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 10px;
+    }
+
+    /* Responsivo */
+    @media (max-width: 600px) {
+      .buttons {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .control-buttons {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>🤖 Bot de Cancelamento</h1>
+
+  <div class="container">
+    <div class="buttons">
+      <button id="baixarModelo">⬇️ Baixar modelo Excel</button>
+      <form id="formUpload" enctype="multipart/form-data">
+        <input type="file" name="arquivo" accept=".xlsx" required />
+        <button type="submit">▶️ Enviar e Rodar Bot</button>
+      </form>
+    </div>
+
+    <div class="control-buttons">
+      <button id="pausarBot">⏸️ Pausar</button>
+      <button id="cancelarBot">⛔ Cancelar</button>
+    </div>
+
+    <div id="status">Aguardando envio...</div>
+
+    <h3>📜 Logs do sistema:</h3>
+    <div id="logs">Aguardando execução...</div>
+  </div>
+
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <script>
+    const logsDiv = document.getElementById("logs");
+    const statusDiv = document.getElementById("status");
+    const socket = io("http://localhost:3000");
+
+    // Alertar sobre nome do arquivo
+    const formUpload = document.getElementById("formUpload");
+    formUpload.addEventListener("submit", (e) => {
+      const arquivo = formUpload.arquivo.files[0];
+      if (!arquivo) return;
+      if (arquivo.name !== "dadosparacancelar.xlsx") {
+        e.preventDefault();
+        alert('⚠️ O arquivo deve estar salvo como "dadosparacancelar.xlsx"');
+        return false;
+      }
+    });
+
+    // Socket.io logs e status
+    socket.on("log", msg => {
+      const linha = document.createElement("div");
+      linha.textContent = msg;
+      logsDiv.appendChild(linha);
+      logsDiv.scrollTop = logsDiv.scrollHeight;
+    });
+
+    socket.on("status", msg => {
+      statusDiv.textContent = msg;
+    });
+
+    document.getElementById("baixarModelo").addEventListener("click", () => {
+      window.location.href = "http://localhost:3000/modelo";
+    });
+
+    // Upload e execução do bot
+    formUpload.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      statusDiv.textContent = "⏳ Enviando arquivo e iniciando bot...";
+      logsDiv.textContent = "";
+
+      const formData = new FormData(e.target);
+      const resposta = await fetch("http://localhost:3000/uploads", {
+        method: "POST",
+        body: formData,
+      });
+
+      const texto = await resposta.text();
+      alert(texto);
+      statusDiv.textContent = "✅ Processo finalizado!";
+    });
+
+    // Botões de Pausar e Cancelar
+    document.getElementById("pausarBot").addEventListener("click", () => {
+      socket.emit("pausar");
+      alert("⏸️ Bot pausado");
+    });
+
+    document.getElementById("cancelarBot").addEventListener("click", () => {
+      socket.emit("cancelar");
+      alert("⛔ Bot cancelado");
+    });
+  </script>
+
+  <a href="Bots.html" class="botao-voltar">⬅️ Voltar para Painel Bot</a>
+</body>
+</html>

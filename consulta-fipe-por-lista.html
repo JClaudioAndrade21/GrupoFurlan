@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Consulta de Peças não vinculadas à FIPE - Grupo Furlan</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(rgba(45,45,45,0.88), rgba(45,45,45,0.88)),
+                  url('fundo menu.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 {
+      margin-top: 60px;
+      text-align: center;
+      color: #b79eff;
+      text-shadow: 0 0 15px #7a56ff;
+    }
+
+    p.subtitulo {
+      color: #ccc;
+      text-align: center;
+      margin-bottom: 40px;
+      font-size: 1.1em;
+    }
+
+    .container {
+      background-color: rgba(0,0,0,0.6);
+      padding: 30px 20px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.4);
+      max-width: 600px;
+      width: 90%;
+      text-align: center;
+    }
+
+    label { display: block; margin: 12px 0 6px; font-weight: bold; color: #b79eff; }
+    select {
+      width: 100%; padding: 10px; border-radius: 6px; border: none;
+      background-color: #1e1e1e; color: #fff; font-size: 16px;
+    }
+
+    button {
+      width: 100%; padding: 12px; margin-top: 20px;
+      background: linear-gradient(135deg, #6e3bff, #532bcc);
+      border: none; color: white; border-radius: 8px;
+      font-size: 17px; font-weight: bold; cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    button:hover { background: linear-gradient(135deg, #7a56ff, #5a38ff); }
+
+    #mensagem { margin-top: 10px; font-weight: bold; color: #ffc107; }
+    #resultado { margin-top: 20px; text-align: left; line-height: 1.6; display: none; }
+
+    .botao-voltar {
+      position: fixed; bottom: 20px; left: 20px;
+      background: linear-gradient(135deg, #6e3bff, #532bcc);
+      color: white; padding: 12px 18px; border-radius: 10px;
+      text-decoration: none; font-weight: 700;
+      box-shadow: 0 6px 14px #6e3bffbb;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Consulta de Peças não vinculadas à FIPE</h1>
+  <p class="subtitulo">Selecione a peça e o modelo para visualizar o valor.</p>
+
+  <div class="container">
+    <label for="peca">🔧 Selecione a Peça:</label>
+    <select id="peca">
+      <option value="">-- Escolha uma Peça --</option>
+    </select>
+
+    <label for="modelo">🚗 Escolha o Modelo:</label>
+    <select id="modelo" disabled>
+      <option value="">-- Escolha o Modelo --</option>
+    </select>
+
+    <button id="btnConsultar" disabled>🔍 Consultar Valor</button>
+    <p id="mensagem"></p>
+    <div id="resultado"></div>
+  </div>
+
+  <a href="Consulta-Ticket.html" class="botao-voltar">⬅️ Voltar para Área de Consultas</a>
+
+  <script>
+    // 🔗 URL do seu Google Apps Script
+    const API_URL = "https://script.google.com/macros/s/AKfycbyjSmghTtmGSlNFuS5MZifn2e31VXI_jqqFqu6oRju-XkQylDWIvNVMY9gT6kVRGpd-/exec";
+
+    // 🔄 Proxy CORS AllOrigins
+    const fetchProxy = async (url) => {
+      const proxy = "https://api.allorigins.win/raw?url=" + encodeURIComponent(url);
+      const response = await fetch(proxy);
+      if (!response.ok) throw new Error("Erro ao acessar proxy");
+      return response.json();
+    };
+
+    const pecaSelect = document.getElementById("peca");
+    const modeloSelect = document.getElementById("modelo");
+    const mensagem = document.getElementById("mensagem");
+    const resultado = document.getElementById("resultado");
+
+    async function carregarPecas() {
+      mensagem.textContent = "⏳ Carregando peças...";
+      try {
+        const data = await fetchProxy(API_URL);
+        (data.pecas || []).forEach(p => {
+          const opt = document.createElement("option");
+          opt.value = p; opt.textContent = p;
+          pecaSelect.appendChild(opt);
+        });
+        mensagem.textContent = "✅ Lista carregada com sucesso!";
+      } catch (err) {
+        mensagem.textContent = "⚠️ Erro ao carregar peças.";
+        console.error(err);
+      }
+    }
+
+    pecaSelect.addEventListener("change", async () => {
+      modeloSelect.innerHTML = '<option value="">-- Escolha o Modelo --</option>';
+      resultado.style.display = "none";
+      const tipo = pecaSelect.value;
+      if (!tipo) { modeloSelect.disabled = true; return; }
+
+      try {
+        const data = await fetchProxy(`${API_URL}?tipo=${encodeURIComponent(tipo)}`);
+        (data.modelos || []).forEach(m => {
+          const opt = document.createElement("option");
+          opt.value = m; opt.textContent = m;
+          modeloSelect.appendChild(opt);
+        });
+        modeloSelect.disabled = false;
+      } catch (err) {
+        mensagem.textContent = "⚠️ Erro ao carregar modelos.";
+        console.error(err);
+      }
+    });
+
+    modeloSelect.addEventListener("change", () => {
+      document.getElementById("btnConsultar").disabled = !modeloSelect.value;
+    });
+
+    document.getElementById("btnConsultar").addEventListener("click", async () => {
+      const tipo = pecaSelect.value;
+      const modelo = modeloSelect.value;
+      resultado.style.display = "none";
+      try {
+        const data = await fetchProxy(`${API_URL}?tipo=${encodeURIComponent(tipo)}&modelo=${encodeURIComponent(modelo)}`);
+        const r = data.resultado || {};
+        resultado.innerHTML = `
+          <div><strong>Peça:</strong> ${r.peca || tipo}</div>
+          <div><strong>Modelo:</strong> ${r.modelo || modelo}</div>
+          <div><strong>Valor:</strong> ${r.valor || "-"}</div>
+          <div><strong>Complemento 1:</strong> ${r.complemento1 || "-"}</div>
+          <div><strong>Complemento 2:</strong> ${r.complemento2 || "-"}</div>
+          <div><strong>Complemento 3:</strong> ${r.complemento3 || "-"}</div>
+        `;
+        resultado.style.display = "block";
+      } catch (err) {
+        mensagem.textContent = "⚠️ Erro ao buscar valor.";
+        console.error(err);
+      }
+    });
+
+    window.onload = carregarPecas;
+  </script>
+</body>
+</html>

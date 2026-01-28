@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sobre Nós - Grupo Furlan</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      background:
+        linear-gradient(rgba(28, 28, 28, 0.92), rgba(28, 28, 28, 0.92)),
+        url('fundo menu.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: #e0e0e0;
+      min-height: 100vh;
+      padding: 2rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    header {
+      background: rgba(25, 25, 25, 0.9);
+      padding: 2rem 2.5rem;
+      border-radius: 20px;
+      box-shadow: 0 12px 30px rgba(50, 0, 150, 0.4);
+      max-width: 900px;
+      width: 100%;
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    header h1 {
+      font-size: clamp(2.5rem, 5vw, 3.2rem);
+      margin: 0;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      text-shadow: 0 0 10px #8a56ff88;
+    }
+
+    nav {
+      margin-top: 1.5rem;
+    }
+
+    nav a {
+      margin: 0 1rem;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #a87aff;
+      padding: 10px 18px;
+      border-radius: 14px;
+      transition: 0.25s ease;
+    }
+
+    nav a:hover {
+      background-color: #a87aff;
+      color: #fff;
+      box-shadow: 0 4px 10px #a87affaa;
+    }
+
+    main {
+      max-width: 1000px;
+      width: 100%;
+      display: flex;
+      gap: 30px;
+      justify-content: center;
+      margin-bottom: 4rem;
+      flex-wrap: nowrap;
+      align-items: flex-start;
+    }
+
+    .fotos-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      flex: 1 1 300px;
+      max-width: 320px;
+    }
+
+    .fotos-container img {
+      width: 100%;
+      border-radius: 15px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.6);
+      transition: transform 0.3s ease;
+      height: 180px;
+      object-fit: cover;
+    }
+
+    .fotos-container img:hover {
+      transform: scale(1.03);
+    }
+
+    .texto-container {
+      background: rgba(40, 40, 40, 0.85);
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: 0 12px 35px rgba(110, 86, 255, 0.6);
+      flex: 1 1 600px;
+      max-height: 680px;
+      overflow-y: auto;
+      color: #dcd6f7;
+    }
+
+    .texto-container h2 {
+      font-size: clamp(2rem, 6vw, 2.5rem);
+      color: #b296ff;
+      margin-bottom: 1.5rem;
+      text-align: center;
+      font-weight: 700;
+      text-shadow: 0 0 10px #b296ffcc;
+      text-transform: uppercase;
+    }
+
+    .texto-container p {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      text-align: justify;
+      margin-bottom: 1.3rem;
+    }
+
+    .texto-container p strong {
+      color: #cdb8ff;
+    }
+
+    .texto-container::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .texto-container::-webkit-scrollbar-thumb {
+      background-color: #a87affcc;
+      border-radius: 6px;
+    }
+
+    footer {
+      max-width: 900px;
+      width: 100%;
+      text-align: center;
+      padding: 12px 0;
+      font-size: 1rem;
+      color: #dcdcdc;
+      text-shadow: 0 0 6px #7a56ff88;
+    }
+
+    @media (max-width: 768px) {
+      main {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .fotos-container,
+      .texto-container {
+        width: 100%;
+        max-width: none;
+      }
+
+      .texto-container {
+        max-height: none;
+        overflow: visible;
+      }
+
+      .fotos-container img {
+        height: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Grupo Furlan</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="sobre.html">Sobre</a>
+      <a href="contato.html">Contato</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="fotos-container">
+      <img src="Foto1.jpeg" alt="Foto da Oficina 1" />
+      <img src="Foto2.jpeg" alt="Foto da Oficina 2" />
+      <img src="Foto3.jpeg" alt="Foto da Oficina 3" />
+      <img src="Foto4.jpg" alt="Foto da Oficina 4" />
+    </div>
+
+    <div class="texto-container">
+      <h2>Sobre Nós</h2>
+      <p>
+        Fundada em <strong>2018</strong>, somos uma empresa Full Service dedicada a fornecer serviços excepcionais de detalhamento.
+        No <strong>Grupo Furlan</strong>, nossa dedicação vai além do serviço prestado. Valorizamos a confiança depositada em nós 
+        por nossos clientes e buscamos sempre superar expectativas, não apenas na qualidade do trabalho, mas também 
+        no suporte pós-serviço.
+      </p>
+      <p>
+        Para garantir sua tranquilidade onde quer que esteja, oferecemos uma <strong>Garantia Nacional</strong> abrangente para nossos serviços. 
+        Acreditamos que a excelência deve atravessar fronteiras, por isso, se você é cliente Porto, pode contar com nossa 
+        assistência em todo território nacional.
+      </p>
+      <p>
+        E para aqueles que ainda não são clientes Porto, não se preocupem. Estendemos nossa garantia a todos os nossos clientes, 
+        independentemente de sua afiliação, assegurando a qualidade e a durabilidade dos serviços prestados em qualquer lugar do país.
+      </p>
+      <p>
+        Acreditamos no poder de nossos serviços e na confiança que eles inspiram. Com a garantia nacional do 
+        <strong>Centro Automotivo Porto Grupo Furlan</strong>, você pode desfrutar da máxima tranquilidade, sabendo que nosso 
+        compromisso com a excelência acompanha você, onde quer que a estrada o leve.
+      </p>
+      <p style="text-align:center; font-weight:bold; margin-top: 2rem; color:#b296ff; text-shadow: 0 0 10px #b296ffcc;">
+        Centro Automotivo Porto Grupo Furlan — excelência em cada detalhe.
+      </p>
+    </div>
+  </main>
+
+  <footer>
+    <p>© 2025 Grupo Furlan</p>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Consulta FIPE - Grupo Furlan</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(rgba(45,45,45,0.88), rgba(45,45,45,0.88)),
+                  url('fundo menu.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: #fff;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 30px 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #b79eff;
+      margin-bottom: 10px;
+      text-shadow: 0 0 15px #7a56ff;
+    }
+    p.subtitulo {
+      color: #ccc;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .container {
+      background-color: rgba(0, 0, 0, 0.6);
+      padding: 25px 20px;
+      border-radius: 15px;
+      max-width: 600px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+    }
+    input {
+      width: 80%;
+      padding: 12px;
+      border-radius: 6px;
+      border: none;
+      font-size: 16px;
+      margin-top: 10px;
+      background-color: #1e1e1e;
+      color: #fff;
+      text-align: center;
+    }
+    input:focus {
+      outline: none;
+      background-color: #2a2a2a;
+      border: 1px solid #7a56ff;
+    }
+    button {
+      margin-top: 20px;
+      padding: 12px 25px;
+      border: none;
+      border-radius: 8px;
+      background-color: #6e3bff;
+      color: white;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #532bcc;
+    }
+    #resultado {
+      margin-top: 25px;
+      width: 100%;
+      max-width: 800px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    .card {
+      background-color: rgba(255,255,255,0.08);
+      padding: 15px 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      transition: transform 0.2s;
+    }
+    .card:hover { transform: scale(1.02); }
+    .card strong {
+      color: #00bfff;
+      text-shadow: 0 0 6px rgba(0,191,255,0.6);
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+    #mensagem {
+      margin-top: 15px;
+      text-align: center;
+      font-weight: bold;
+      color: #ffc107;
+    }
+
+    /* Barra de pesquisa interna */
+    #barra-filtro {
+      display: none;
+      margin: 20px auto;
+      width: 60%;
+      text-align: center;
+    }
+    #campoFiltro {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      font-size: 15px;
+      background-color: #1e1e1e;
+      color: #fff;
+      border: 1px solid #6e3bff;
+      text-align: center;
+    }
+    #campoFiltro::placeholder {
+      color: #aaa;
+    }
+
+    .botao-voltar {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background-color: #6e3bff;
+      color: white;
+      padding: 12px 18px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: 700;
+      box-shadow: 0 6px 14px #6e3bffbb;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .botao-voltar:hover {
+      background-color: #532bcc;
+      box-shadow: 0 8px 20px #532bcccc;
+    }
+  </style>
+</head>
+<body>
+  <h1>🔍 Consulta Fipe</h1>
+  <p class="subtitulo">Digite o CÓDIGO FIPE para buscar todas as informações da tabela.</p>
+
+  <div class="container">
+    <input type="text" id="codigoFipe" placeholder="Ex: 004501-2">
+    <button onclick="consultarFipe()">Consultar</button>
+    <p id="mensagem"></p>
+  </div>
+
+  <!-- Barra de pesquisa que aparece após o resultado -->
+  <div id="barra-filtro">
+    <input type="text" id="campoFiltro" placeholder="Filtrar por nome da peça, complemento, etc...">
+  </div>
+
+  <div id="resultado"></div>
+
+  <a href="Consulta-Ticket.html" class="botao-voltar">⬅️ Voltar</a>
+
+  <script>
+    const SHEETS_API = "https://script.google.com/macros/s/AKfycbzmSzGXvRC2FuC_XIqGB6PJxXnFX634dS_vb1KSonhmPTkY8GdCXJYM3VkmaqSHdQ5T/exec";
+    let dadosOriginais = [];
+
+    async function consultarFipe() {
+      const codigo = document.getElementById("codigoFipe").value.trim();
+      const mensagem = document.getElementById("mensagem");
+      const resultado = document.getElementById("resultado");
+      const barraFiltro = document.getElementById("barra-filtro");
+
+      resultado.innerHTML = "";
+      mensagem.textContent = "";
+      barraFiltro.style.display = "none";
+
+      if (!codigo) {
+        mensagem.textContent = "⚠️ Digite um código FIPE válido.";
+        return;
+      }
+
+      mensagem.textContent = "⏳ Buscando informações...";
+
+      try {
+        const resp = await fetch(`${SHEETS_API}?fipe=${codigo}`);
+        const data = await resp.json();
+
+        if (!data || data.status === "NOK") {
+          mensagem.textContent = "❌ Nenhum resultado encontrado para este código FIPE.";
+          return;
+        }
+
+        mensagem.textContent = `✅ ${data.quantidade} registro(s) encontrado(s)!`;
+        dadosOriginais = data.resultados;
+
+        // Exibir campo de filtro interno
+        barraFiltro.style.display = "block";
+
+        mostrarResultados(dadosOriginais);
+      } catch (err) {
+        mensagem.textContent = "⚠️ Erro ao consultar os dados.";
+        console.error("Erro:", err);
+      }
+    }
+
+    function mostrarResultados(lista) {
+      const resultado = document.getElementById("resultado");
+      resultado.innerHTML = "";
+
+      lista.forEach(f => {
+        const card = document.createElement("div");
+        card.classList.add("card");
+        card.innerHTML = `
+          <div><strong>Código FIPE:</strong> ${f["Código Fipe"] || "-"}</div>
+          <div><strong>Peça:</strong> ${f["PEÇA"] || "-"}</div>
+          <div><strong>Ano FIPE:</strong> ${f["Ano Fipe"] || "-"}</div>
+          <div><strong>Nome FIPE:</strong> ${f["NOME FIPE"] || "-"}</div>
+          <div><strong>Valor:</strong> ${f["Tabela 1"] || "-"}</div>
+          <div><strong>Complemento 1:</strong> ${f["Complemento 1"] || "-"}</div>
+          <div><strong>Complemento 2:</strong> ${f["Complemento 2"] || "-"}</div>
+          <div><strong>Complemento 3:</strong> ${f["Complemento 3"] || "-"}</div>
+        `;
+        resultado.appendChild(card);
+      });
+    }
+
+    // Filtrar dentro dos resultados já carregados
+    document.getElementById("campoFiltro").addEventListener("input", e => {
+      const termo = e.target.value.toLowerCase();
+      const filtrados = dadosOriginais.filter(f =>
+        (f["PEÇA"] || "").toLowerCase().includes(termo) ||
+        (f["Complemento 1"] || "").toLowerCase().includes(termo) ||
+        (f["Complemento 2"] || "").toLowerCase().includes(termo) ||
+        (f["Complemento 3"] || "").toLowerCase().includes(termo)
+      );
+      mostrarResultados(filtrados);
+    });
+  </script>
+</body>
+</html>

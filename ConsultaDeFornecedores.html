@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Consulta de Fornecedores</title>
+  <style>
+    body {
+      background:
+        linear-gradient(rgba(45, 45, 45, 0.9), rgba(45, 45, 45, 0.9)),
+        url('fundo menu.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: #dcdcdc;
+      min-height: 100vh;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 40px 20px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 10px;
+      color: #ffffff;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    }
+
+    p {
+      margin-bottom: 30px;
+      color: #ccc;
+    }
+
+    #consultaFornecedor {
+      background: rgba(45, 45, 45, 0.8);
+      border: 1px solid #7a56ff88;
+      border-radius: 10px;
+      padding: 25px;
+      max-width: 600px;
+      width: 100%;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+      text-align: center;
+    }
+
+    #consultaFornecedor label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 10px;
+      font-size: 1.1rem;
+    }
+
+    #buscaFornecedor {
+      width: 90%;
+      padding: 12px;
+      border-radius: 6px;
+      border: 1px solid #aaa;
+      margin-bottom: 15px;
+      font-size: 1rem;
+    }
+
+    button {
+      padding: 10px 25px;
+      border: none;
+      background-color: #7a56ff;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 1rem;
+      transition: background 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 0 12px #7a56ff80;
+    }
+
+    button:hover {
+      background-color: #5e3fd1;
+      box-shadow: 0 0 16px #5e3fd1cc;
+    }
+
+    .botoes-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: center;
+      margin-top: 15px;
+    }
+
+    #resultado {
+      margin-top: 30px;
+      max-width: 600px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      padding: 20px;
+      border: 1px solid #7a56ff88;
+    }
+
+    #resultado h4 {
+      margin-bottom: 15px;
+    }
+
+    #resultado ul {
+      list-style-type: disc;
+      padding-left: 20px;
+    }
+
+    #resultado li {
+      margin-bottom: 15px;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 600px) {
+      #buscaFornecedor {
+        width: 100%;
+      }
+    }
+
+    .botao-voltar {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background-color: #6e3bff;
+      color: white;
+      padding: 12px 18px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: 700;
+      box-shadow: 0 6px 14px #6e3bffbb;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      user-select: none;
+    }
+
+    .botao-voltar:hover {
+      background-color: #532bcc;
+      box-shadow: 0 8px 20px #532bcccc;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Consulta de Fornecedores</h1>
+  <p>Digite o nome da peça ou serviço que você procura:</p>
+
+  <div id="consultaFornecedor">
+    <label for="buscaFornecedor">Peça ou serviço:</label>
+    <input type="text" id="buscaFornecedor" placeholder="Ex: Pastilha de freio, alinhamento..." />
+
+    <div class="botoes-container">
+      <button onclick="buscarFornecedor()">🔍 Buscar Fornecedor</button>
+      <button onclick="confirmarCadastro()">📋 Cadastrar Novo Fornecedor</button>
+    </div>
+  </div>
+
+  <div id="resultado"></div>
+
+  <script>
+    async function buscarFornecedor() {
+      const termo = document.getElementById("buscaFornecedor").value.trim();
+      if (!termo) {
+        alert("Digite o nome da peça ou serviço para buscar.");
+        return;
+      }
+
+      const baseUrl = "https://script.google.com/macros/s/AKfycbzYfFuP-hoYuaBl6sjYjIiiw3a3OPYxfRO30GKRndOokqjhY3ePWW6azs8Q4Vez9CB5MA/exec";
+      const url = `${baseUrl}?busca=${encodeURIComponent(termo)}`;
+
+      try {
+        const resposta = await fetch(url);
+        const dados = await resposta.json();
+
+        // Se encontrou resultados, mostra normalmente
+        if (dados.length > 0) {
+          mostrarResultados(termo, dados);
+          return;
+        }
+
+        // Caso contrário, busca por fornecedores de peças em geral
+        const fallbackTermo = "peças em geral";
+        const fallbackUrl = `${baseUrl}?busca=${encodeURIComponent(fallbackTermo)}`;
+        const respostaFallback = await fetch(fallbackUrl);
+        const dadosFallback = await respostaFallback.json();
+
+        if (dadosFallback.length > 0) {
+          mostrarResultadosGenericos(termo, dadosFallback);
+        } else {
+          // Nenhum dado, nem específico, nem genérico
+          document.getElementById("resultado").innerHTML = `
+            <h4>Resultado da Consulta</h4>
+            <p style="color:red;">Nenhum fornecedor ou marca foi encontrado para "<strong>${termo}</strong>".</p>
+          `;
+        }
+
+      } catch (e) {
+        console.error("Erro ao consultar fornecedores:", e);
+        document.getElementById("resultado").innerHTML = `
+          <p style="color:red;">Erro ao buscar fornecedores. Verifique a conexão com a API.</p>
+        `;
+      }
+    }
+
+    function mostrarResultados(termo, dados) {
+      let html = `<h4>Fornecedores ou Marcas encontrado para "<strong>${termo}</strong>":</h4><ul>`;
+      dados.forEach(item => {
+        html += `<li>
+          <strong>${item.fornecedor}</strong> - ${item.contato}<br>
+          <em>${item.item}</em><br>
+          <span style="color:#aaa;">${item.endereco || "Endereço não informado"}</span>
+        </li>`;
+      });
+      html += "</ul>";
+      document.getElementById("resultado").innerHTML = html;
+    }
+
+    function mostrarResultadosGenericos(termoOriginal, dados) {
+      let html = `<h4>Não encontramos resultados específicos para "<strong>${termoOriginal}</strong>".</h4>
+        <p>Mas veja fornecedores que trabalham com peças automotivas em geral:</p>
+        <ul>`;
+      dados.forEach(item => {
+        html += `<li>
+          <strong>${item.fornecedor}</strong> - ${item.contato}<br>
+          <em>${item.item}</em><br>
+          <span style="color:#aaa;">${item.endereco || "Endereço não informado"}</span>
+        </li>`;
+      });
+      html += "</ul>";
+      document.getElementById("resultado").innerHTML = html;
+    }
+
+    function confirmarCadastro() {
+      const confirmar = confirm(
+        "Antes de continuar, verifique se o fornecedor já foi buscado e não encontrado.\n\nDeseja realmente sugerir um novo cadastro?"
+      );
+
+      if (confirmar) {
+        window.open("https://docs.google.com/forms/d/1argjiGo5IVIoNhUXBQtYSKhxM41bbkT_jlGDPJ_mOwI/viewform?edit_requested=true", "_blank");
+      }
+    }
+  </script>
+
+  <a href="Consulta.html" class="botao-voltar">⬅️ Voltar para Área de Consultas</a>
+
+</body>
+</html>

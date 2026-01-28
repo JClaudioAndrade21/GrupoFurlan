@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Consulta de Peças - Página 2</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(rgba(45,45,45,0.88), rgba(45,45,45,0.88)),
+                url('fundo menu.jpg') no-repeat center center fixed;
+    background-size: cover;
+    color: #fff;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding: 30px 20px;
+  }
+
+  h1 {
+    text-align: center;
+    color: #b79eff;
+    margin-bottom: 10px;
+    text-shadow: 0 0 15px #7a56ff;
+  }
+
+  p.subtitulo {
+    color: #ccc;
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  .container {
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 30px 20px;
+    border-radius: 15px;
+    max-width: 600px;
+    width: 100%;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+    text-align: center;
+  }
+
+  select {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    font-size: 16px;
+    margin-bottom: 20px;
+    background-color: #1e1e1e;
+    color: #fff;
+  }
+
+  select:focus {
+    outline: none;
+    border: 1px solid #7a56ff;
+    background-color: #2a2a2a;
+  }
+
+  button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background-color: #6e3bff;
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  button:hover {
+    background-color: #532bcc;
+  }
+
+  .resultado {
+    margin-top: 20px;
+    background-color: rgba(255,255,255,0.08);
+    border-radius: 10px;
+    padding: 15px;
+    font-size: 18px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  }
+
+  .valor {
+    color: #00ff6a;
+    font-weight: 700;
+    font-size: 20px;
+    margin-top: 10px;
+  }
+
+  .botao-voltar {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background-color: #6e3bff;
+    color: white;
+    padding: 12px 18px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 700;
+    box-shadow: 0 6px 14px #6e3bffbb;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .botao-voltar:hover {
+    background-color: #532bcc;
+  }
+</style>
+</head>
+<body>
+
+  <h1>💡 Consulta de Peças e Serviço</h1>
+  <p class="subtitulo">Escolha a peça ou o serviço desejado e depois selecione o modelo disponível para consultar o valor atualizado.</p>
+
+  <div class="container">
+    <select id="selectPeca">
+      <option value=""> Escolha uma Peça ou Serviço</option>
+    </select>
+
+    <select id="selectModelo" disabled>
+      <option value=""> Escolha o Modelo </option>
+    </select>
+
+    <button id="btnConsultar" disabled>🔍 Consultar Valor</button>
+
+    <div id="resultado" class="resultado" style="display:none;"></div>
+  </div>
+
+  <a href="Consulta-Ticket.html" class="botao-voltar">⬅️ Voltar</a>
+
+  <script>
+    // ✅ SUA API REAL
+    const API_URL = "https://script.google.com/macros/s/AKfycbzZm8S7NqdMa-Nd7WrxQg8NDGw-jFzgGzixfVtFp5rcKfv_-NOHDkQOPXCVaeP4oX_-/exec";
+
+    async function carregarPecas() {
+      const resp = await fetch(API_URL);
+      const data = await resp.json();
+      if (data.status === "OK") {
+        const select = document.getElementById("selectPeca");
+        data.pecas.forEach(p => {
+          const opt = document.createElement("option");
+          opt.value = p;
+          opt.textContent = p;
+          select.appendChild(opt);
+        });
+      }
+    }
+
+    document.getElementById("selectPeca").addEventListener("change", async e => {
+      const tipo = e.target.value;
+      const modeloSelect = document.getElementById("selectModelo");
+      modeloSelect.innerHTML = "<option value=''> Escolha o Modelo </option>";
+      document.getElementById("resultado").style.display = "none";
+
+      if (!tipo) return;
+
+      const resp = await fetch(`${API_URL}?tipo=${encodeURIComponent(tipo)}`);
+      const data = await resp.json();
+
+      if (data.status === "OK") {
+        data.modelos.forEach(m => {
+          const opt = document.createElement("option");
+          opt.value = m;
+          opt.textContent = m;
+          modeloSelect.appendChild(opt);
+        });
+        modeloSelect.disabled = false;
+      }
+    });
+
+    document.getElementById("selectModelo").addEventListener("change", e => {
+      document.getElementById("btnConsultar").disabled = !e.target.value;
+    });
+
+    document.getElementById("btnConsultar").addEventListener("click", async () => {
+      const tipo = document.getElementById("selectPeca").value;
+      const modelo = document.getElementById("selectModelo").value;
+      const resp = await fetch(`${API_URL}?tipo=${encodeURIComponent(tipo)}&modelo=${encodeURIComponent(modelo)}`);
+      const data = await resp.json();
+
+      const resultDiv = document.getElementById("resultado");
+      if (data.status === "OK") {
+        resultDiv.innerHTML = `
+          <div><strong>Peça:</strong> ${tipo}</div>
+          <div><strong>Modelo:</strong> ${modelo}</div>
+          <div class="valor">💰 Valor: ${data.valor}</div>
+        `;
+        resultDiv.style.display = "block";
+      } else {
+        resultDiv.innerHTML = "❌ Não encontrado.";
+        resultDiv.style.display = "block";
+      }
+    });
+
+    window.onload = carregarPecas;
+  </script>
+
+</body>
+</html>
